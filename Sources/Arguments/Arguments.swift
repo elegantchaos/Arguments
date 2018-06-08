@@ -64,11 +64,18 @@ public struct Arguments {
      Return an argument, or a default value if it's missing.
      */
 
-    public func argument(_ name : String, `default` : String) -> String  {
+    public func argument(_ name : String, `default`: String = "") -> String  {
         if let value = parsed["<\(name)>"] as? String {
             return value
         }
         return `default`
     }
 
+    /**
+     Was a particular command given?
+     */
+
+    public func command(_ name: String) -> Bool {
+        return parsed[name] != nil
+    }
 }
