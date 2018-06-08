@@ -76,6 +76,9 @@ public struct Arguments {
      */
 
     public func command(_ name: String) -> Bool {
-        return parsed[name] != nil
+        if let value = parsed[name] as? Bool {
+            return value
+        }
+        return false
     }
 }
