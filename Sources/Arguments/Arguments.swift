@@ -30,10 +30,10 @@ public struct Arguments {
     Other arguments end up in the unused array (so that they can be passed on to a sub-process, for example).
     */
 
-    public init(documentation : String) {
+    public init(documentation : String, version: String) {
         let filteredArguments = Manager.removeLoggingOptions(from: CommandLine.arguments)
         self.program = filteredArguments[0]
-        self.parsed = Docopt.parse(documentation, argv: Array(filteredArguments[1...]), help: true, version: "1.0")
+        self.parsed = Docopt.parse(documentation, argv: Array(filteredArguments[1...]), help: true, version: version)
     }
 
 
