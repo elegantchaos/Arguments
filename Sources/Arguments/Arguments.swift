@@ -15,8 +15,9 @@ import Logger
 
 public struct Arguments {
 
-    public enum Failure : Error {
-    case unknownOption(name : String)
+    public enum Failure: Error {
+    case unknownOption(name: String)
+    case missingArgument(name: String)
     }
 
     let program : String
@@ -30,7 +31,7 @@ public struct Arguments {
     Other arguments end up in the unused array (so that they can be passed on to a sub-process, for example).
     */
 
-    public init(documentation : String, version: String) {
+    public init(documentation: String, version: String) {
         let filteredArguments = Manager.removeLoggingOptions(from: CommandLine.arguments)
         self.program = filteredArguments[0]
         self.parsed = Docopt.parse(documentation, argv: Array(filteredArguments[1...]), help: true, version: version)
@@ -43,7 +44,7 @@ public struct Arguments {
     we were set up.
     */
 
-    public func expectedOption(_ name : String) throws -> String  {
+    public func expectedOption(_ name: String) throws -> String  {
         if let value = parsed["--\(name)"] as? String {
             return value
         }
@@ -55,7 +56,7 @@ public struct Arguments {
     Return an option, optionally.
     */
 
-    public func option(_ name : String) -> String?  {
+    public func option(_ name: String) -> String?  {
         return parsed["--\(name)"] as? String
     }
 
@@ -63,7 +64,7 @@ public struct Arguments {
     Return an option, or a default value if it's missing.
     */
 
-    public func option(_ name : String, `default`: String) -> String  {
+    public func option(_ name: String, `default`: String) -> String  {
         if let value = parsed["--\(name)"] as? String {
             return value
         }
@@ -74,7 +75,7 @@ public struct Arguments {
     Check a boolean option.
     */
 
-    public func flag(_ name : String) -> Bool  {
+    public func flag(_ name: String) -> Bool  {
         if let value = parsed["--\(name)"] as? Bool {
             return value
         }
@@ -85,13 +86,23 @@ public struct Arguments {
     Return an argument, or a default value if it's missing.
     */
 
-    public func argument(_ name : String, `default`: String = "") -> String  {
+    public func argument(_ name: String, `default`: String = "") -> String  {
         if let value = parsed["<\(name)>"] as? String {
             return value
         }
         return `default`
     }
 
+    /**
+    Return an expected argument, or throw if it's missing.
+    */
+
+    public func expectedArgument(_ name: String) throws -> String  {
+        if let value = parsed["<\(name)>"] as? String {
+            return value
+        }
+        throw Failure.missingArgument(name: name)
+    }
     /**
     Was a particular command given?
     */
@@ -112,7 +123,7 @@ public struct Arguments {
     the arguments.
     */
 
-    public init(program: String, parsed : [String:Any] = [:]) {
+    public init(program: String, parsed: [String:Any] = [:]) {
         self.program = program
         self.parsed = parsed
     }
