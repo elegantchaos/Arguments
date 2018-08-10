@@ -43,12 +43,20 @@ public struct Arguments {
     we were set up.
     */
 
-    public func option(_ name : String) throws -> String  {
+    public func expectedOption(_ name : String) throws -> String  {
         if let value = parsed["--\(name)"] as? String {
             return value
         }
 
         throw Failure.unknownOption(name: name)
+    }
+
+    /**
+    Return an option, optionally.
+    */
+
+    public func option(_ name : String) -> String?  {
+        return parsed["--\(name)"] as? String
     }
 
     /**
@@ -66,7 +74,7 @@ public struct Arguments {
     Check a boolean option.
     */
 
-    public func option(_ name : String) -> Bool  {
+    public func flag(_ name : String) -> Bool  {
         if let value = parsed["--\(name)"] as? Bool {
             return value
         }
