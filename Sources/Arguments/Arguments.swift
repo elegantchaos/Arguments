@@ -6,12 +6,11 @@
 
 /**
 Argument parsing.
-Uses Docopt for the heavy lifting, but performs a bit of preliminary
-cleanup first, and provides a simplified API to read options and arguments.
+Uses Docopt for the heavy lifting, but provides a simplified API to read options and arguments.
 */
 
 import Docopt
-import Logger
+import Foundation
 
 public struct Arguments {
 
@@ -31,10 +30,12 @@ public struct Arguments {
     Other arguments end up in the unused array (so that they can be passed on to a sub-process, for example).
     */
 
-    public init(documentation: String, version: String) {
-        let filteredArguments = Manager.removeLoggingOptions(from: CommandLine.arguments)
-        self.program = filteredArguments[0]
-        self.parsed = Docopt.parse(documentation, argv: Array(filteredArguments[1...]), help: true, version: version)
+    public init(documentation: String, version: String, arguments: [String] = CommandLine.arguments) {
+
+        let args = arguments.count > 1 ? Array(arguments[1...]) : []
+
+        program = arguments[0]
+        parsed = Docopt.parse(documentation, argv: args, help: true, version: version)
     }
 
 
@@ -103,6 +104,7 @@ public struct Arguments {
         }
         throw Failure.missingArgument(name: name)
     }
+    
     /**
     Was a particular command given?
     */
@@ -111,6 +113,7 @@ public struct Arguments {
         if let value = parsed[name] as? Bool {
             return value
         }
+
         return false
     }
 
