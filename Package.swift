@@ -10,7 +10,7 @@ let package = Package(
             targets: ["Arguments"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/elegantchaos/docopt.swift.git", from: "0.6.11")
+        .package(url: "https://github.com/elegantchaos/docopt.swift.git", from: "0.6.12")
     ],
     targets: [
         .target(
